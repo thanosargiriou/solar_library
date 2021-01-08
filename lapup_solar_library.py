@@ -39,9 +39,9 @@ def decl(datetime_object):
     """
 
     return 0.006918 - 0.399912 * np.cos(fractional_year(datetime_object)) + 0.070257 * np.sin(fractional_year
-            (datetime_object)) - 0.006758 * np.cos(2 * fractional_year(datetime_object)) + 0.000907 * \
-            np.sin(2 * fractional_year(datetime_object)) - 0.002697 * np.cos(3 * fractional_year(datetime_object)) +\
-           0.00148 * np.sin(3 * fractional_year(datetime_object))
+                            (datetime_object)) - 0.006758 * np.cos(2 * fractional_year(datetime_object)) + 0.000907 * \
+             np.sin(2 * fractional_year(datetime_object)) - 0.002697 * np.cos(3 * fractional_year(datetime_object)) +\
+                                                                 0.00148 * np.sin(3 * fractional_year(datetime_object))
 
 
 def eqtime(datetime_object):
