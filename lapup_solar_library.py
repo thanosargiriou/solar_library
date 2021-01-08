@@ -21,9 +21,10 @@ true_solar_time: true solar time as python datetime object YYYY-MM-DD h:m:s
 
 libraries used: numpy as np
 
-Version 1.0
+Version 1.01
+Intro of numpy.radians() function
 
-A. Argiriou, LAPUP, University of Patras, 2020-01-06
+A. Argiriou, LAPUP, University of Patras, 2020-01-08
 """
 
 import pandas as pd
@@ -75,7 +76,6 @@ def true_solar_time(datetime_object, longitude):
     timezone = round(longitude / 15) + 1
 
     time_offset = eqtime(datetime_object) + 4. * longitude - 60. * timezone
-    # time_offset = eqtime(datetime_object) + 4. * (30 - longitude)
 
     return datetime_object + pd.Timedelta(minutes=time_offset)
 
@@ -90,7 +90,8 @@ def hour_angle(datetime_object, longitude):
 
     tst = true_solar_time(datetime_object, longitude)
     tst_decimal = tst.hour + (tst.minute + (tst.second + tst.microsecond * 10 ** -6) / 60.) / 60.
-    return 15. * (tst_decimal - 12.) * np.pi / 180.
+
+    return np.radians(15. * (tst_decimal - 12.))
 
 
 def sza(datetime_object, latitude, longitude):
@@ -102,7 +103,7 @@ def sza(datetime_object, latitude, longitude):
     :return: solar zenith angle (rad)
     """
 
-    return np.arccos(np.sin(latitude * np.pi / 180.) * np.sin(decl(datetime_object)) + np.cos(latitude * np.pi / 180.) *
+    return np.arccos(np.sin(np.radians(latitude)) * np.sin(decl(datetime_object)) + np.cos(np.radians(latitude)) *
                      np.cos(decl(datetime_object)) * np.cos(hour_angle(datetime_object, longitude)))
 
 
@@ -114,9 +115,9 @@ def sazimuth(datetime_object, latitude, longitude):
     :param latitude: latitude at the position of interest in degrees (positive to the north of the equator)
     :return: solar azimuth angle (rad)
     """
-    d2r = np.pi / 180.  # Converts degrees to rads
-    return 2 * np.pi - np.arccos((np.sin(decl(datetime_object)) * np.cos(latitude * d2r) - np.cos(hour_angle(
-        datetime_object, longitude)) * np.cos(decl(datetime_object)) * np.sin(latitude * d2r)) /
+
+    return 2 * np.pi - np.arccos((np.sin(decl(datetime_object)) * np.cos(np.radians(latitude)) - np.cos(hour_angle(
+        datetime_object, longitude)) * np.cos(decl(datetime_object)) * np.sin(np.radians(latitude))) /
                      np.sin(sza(datetime_object, latitude, longitude)))
 
 # Example of application on solar data from the LAPUP radiometric station in Patras
@@ -134,5 +135,5 @@ def sazimuth(datetime_object, latitude, longitude):
 # for i in [680, 250000]:
 #     print(df.index[i])
 #     print(hour_angle(df.index[i], lon))
-#     print(90 - sza(df.index[i], lat, lon) * 180/np.pi)
-#     print(sazimuth(df.index[i], lat, lon)*180./np.pi)
+#     print(90 - np.rad2deg(sza(df.index[i], lat, lon)))
+#     print(np.rad2deg(sazimuth(df.index[i], lat, lon)))
